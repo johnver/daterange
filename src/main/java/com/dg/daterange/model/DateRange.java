@@ -145,4 +145,25 @@ public final class DateRange implements Serializable {
 		return daysBetween + 1;
 
 	}
+
+	/**
+	 * 
+	 * Assumes that startDate and endDate are inclusive in the calculation.
+	 * 
+	 * @param aDate
+	 * @return
+	 */
+	public boolean isInRange(final Date aDate) {
+		boolean ret = false;
+
+		if (aDate.equals(this.getStartDate())
+				|| aDate.equals(this.getEndDate())) {
+			ret = true;
+		} else {
+			ret = aDate.after(this.getStartDate());
+			ret &= aDate.before(this.getEndDate());
+		}
+
+		return ret;
+	}
 }

@@ -92,6 +92,34 @@ public class DateRangeTest {
 		this.testFixture.then_the_result_should_be_true();
 	}
 
+	@Test
+	public void should_match_in_range_calculation() {
+		this.testFixture.given_a_valid_dates();
+		this.testFixture.when_the_is_in_range_is_called();
+		this.testFixture.then_the_result_should_be_true();
+	}
+
+	@Test
+	public void should_match_in_range_calculation_inclusive_of_start_date() {
+		this.testFixture.given_a_date_similar_to_start_date();
+		this.testFixture.when_the_is_in_range_is_called();
+		this.testFixture.then_the_result_should_be_true();
+	}
+
+	@Test
+	public void should_match_in_range_calculation_inclusive_of_end_date() {
+		this.testFixture.given_a_date_similar_to_end_date();
+		this.testFixture.when_the_is_in_range_is_called();
+		this.testFixture.then_the_result_should_be_true();
+	}
+
+	@Test
+	public void should_not_match_in_range_calculation() {
+		this.testFixture.given_an_out_of_range_date();
+		this.testFixture.when_the_is_in_range_is_called();
+		this.testFixture.then_the_result_should_be_true();
+	}
+
 	class DateRangeTestFixture {
 
 		private Date startDate;
@@ -101,6 +129,9 @@ public class DateRangeTest {
 
 		private boolean result;
 		private int expectedDaysBetween;
+
+		private boolean expectedInRangeResult;
+		private Date aDate;
 
 		DateRangeTestFixture() {
 
@@ -120,6 +151,12 @@ public class DateRangeTest {
 
 			// assuming that startDate end endDate are inclusive
 			this.expectedDaysBetween = daysDiff + 1;
+
+			final Calendar dateYesterday = new GregorianCalendar(
+					today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+					today.get(Calendar.DAY_OF_MONTH) - 1);
+			this.aDate = dateYesterday.getTime();
+			this.expectedInRangeResult = true;
 
 		}
 
@@ -175,6 +212,71 @@ public class DateRangeTest {
 
 		}
 
+		public void given_a_date_similar_to_start_date() {
+
+			final int daysDiff = 5;
+
+			final Calendar today = new GregorianCalendar();
+			final Calendar fiveDaysAgo = new GregorianCalendar(
+					today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+					today.get(Calendar.DAY_OF_MONTH) - daysDiff);
+			this.startDate = fiveDaysAgo.getTime();
+			this.endDate = today.getTime();
+			// assuming start date and
+			// end date are
+			// inclusive.
+			this.expectedDaysBetween = daysDiff + 1;
+			this.aDate = fiveDaysAgo.getTime();
+			this.expectedInRangeResult = true;
+
+		}
+
+		public void given_an_out_of_range_date() {
+
+			final int daysDiff = 5;
+
+			final Calendar today = new GregorianCalendar();
+			final Calendar fiveDaysAgo = new GregorianCalendar(
+					today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+					today.get(Calendar.DAY_OF_MONTH) - daysDiff);
+			final Calendar aDateCalendar = new GregorianCalendar(
+					today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+					today.get(Calendar.DAY_OF_MONTH) + 1); // out of range date
+			this.startDate = fiveDaysAgo.getTime();
+			this.endDate = today.getTime();
+			// assuming start date and
+			// end date are
+			// inclusive.
+			this.expectedDaysBetween = daysDiff + 1;
+
+			this.aDate = aDateCalendar.getTime();
+			this.expectedInRangeResult = false;
+
+		}
+
+		public void given_a_date_similar_to_end_date() {
+
+			final int daysDiff = 5;
+
+			final Calendar today = new GregorianCalendar();
+			final Calendar fiveDaysAgo = new GregorianCalendar(
+					today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+					today.get(Calendar.DAY_OF_MONTH) - daysDiff);
+			final Calendar aDateCalendar = new GregorianCalendar(
+					today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+					today.get(Calendar.DAY_OF_MONTH));
+			this.startDate = fiveDaysAgo.getTime();
+			this.endDate = today.getTime();
+			// assuming start date and
+			// end date are
+			// inclusive.
+			this.expectedDaysBetween = daysDiff + 1;
+
+			this.aDate = aDateCalendar.getTime();
+			this.expectedInRangeResult = true;
+
+		}
+
 		public void when_the_object_is_instantiated() {
 			try {
 				this.dateRange = new DateRange(this.startDate, this.endDate);
@@ -189,6 +291,16 @@ public class DateRangeTest {
 			try {
 				this.dateRange = new DateRange(this.startDate, this.endDate);
 				this.result = this.dateRange.getDaysBetween() == this.expectedDaysBetween;
+			} catch (final Exception e) {
+				this.result = false;
+			}
+
+		}
+
+		public void when_the_is_in_range_is_called() {
+			try {
+				this.dateRange = new DateRange(this.startDate, this.endDate);
+				this.result = this.dateRange.isInRange(this.aDate) == this.expectedInRangeResult;
 			} catch (final Exception e) {
 				this.result = false;
 			}
