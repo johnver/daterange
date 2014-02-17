@@ -120,6 +120,34 @@ public class DateRangeTest {
 		this.testFixture.then_the_result_should_be_true();
 	}
 
+	@Test
+	public void should_match_num_months_between() {
+		this.testFixture.given_a_range_of_two_months();
+		this.testFixture.when_the_get_months_between_is_calculated();
+		this.testFixture.then_the_result_should_be_true();
+	}
+
+	@Test
+	public void should_match_one_and_half_months_between() {
+		this.testFixture.given_a_range_of_one_and_half_months();
+		this.testFixture.when_the_get_months_between_is_calculated();
+		this.testFixture.then_the_result_should_be_true();
+	}
+
+	@Test
+	public void should_match_one_half_a_month_between() {
+		this.testFixture.given_a_range_of_one_and_half_months();
+		this.testFixture.when_the_get_months_between_is_calculated();
+		this.testFixture.then_the_result_should_be_true();
+	}
+
+	@Test
+	public void should_match_half_a_month_between() {
+		this.testFixture.given_a_range_of_half_months();
+		this.testFixture.when_the_get_months_between_is_calculated();
+		this.testFixture.then_the_result_should_be_true();
+	}
+
 	class DateRangeTestFixture {
 
 		private Date startDate;
@@ -132,6 +160,8 @@ public class DateRangeTest {
 
 		private boolean expectedInRangeResult;
 		private Date aDate;
+
+		private double expectedMonthsBetween;
 
 		DateRangeTestFixture() {
 
@@ -157,6 +187,8 @@ public class DateRangeTest {
 					today.get(Calendar.DAY_OF_MONTH) - 1);
 			this.aDate = dateYesterday.getTime();
 			this.expectedInRangeResult = true;
+
+			this.expectedMonthsBetween = 0.0;
 
 		}
 
@@ -277,6 +309,72 @@ public class DateRangeTest {
 
 		}
 
+		public void given_a_range_of_one_and_half_months() {
+
+			final int daysDiff = 8;
+
+			final Calendar startDateCalendar = new GregorianCalendar(2010, 8, 1);
+			final Calendar endDateCalendar = new GregorianCalendar(2010, 9, 15);
+			final Calendar dateYesterday = new GregorianCalendar(2014, 1, 3);
+			this.startDate = startDateCalendar.getTime();
+			this.endDate = endDateCalendar.getTime();
+
+			// assuming start date and
+			// end date are
+			// inclusive.
+			this.expectedDaysBetween = daysDiff + 1;
+
+			this.expectedMonthsBetween = 1.5;
+			this.aDate = dateYesterday.getTime();
+			this.expectedInRangeResult = true;
+
+		}
+
+		public void given_a_range_of_half_months() {
+
+			final int daysDiff = 8;
+
+			final Calendar startDateCalendar = new GregorianCalendar(2010, 8, 1);
+			final Calendar endDateCalendar = new GregorianCalendar(2010, 8, 15);
+			final Calendar dateYesterday = new GregorianCalendar(2014, 1, 3);
+			this.startDate = startDateCalendar.getTime();
+			this.endDate = endDateCalendar.getTime();
+			// assuming start date and
+			// end date are
+			// inclusive.
+			this.expectedDaysBetween = daysDiff + 1;
+			this.expectedMonthsBetween = 0.5;
+			this.aDate = dateYesterday.getTime();
+			this.expectedInRangeResult = true;
+
+		}
+
+		public void given_a_range_of_two_months() {
+
+			final int monthsDiff = 2;
+
+			final Calendar today = new GregorianCalendar();
+			final Calendar twoMonthAgo = new GregorianCalendar(
+					today.get(Calendar.YEAR), today.get(Calendar.MONTH)
+							- monthsDiff, today.get(Calendar.DAY_OF_MONTH));
+			final Calendar dateYesterday = new GregorianCalendar(
+					today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+					today.get(Calendar.DAY_OF_MONTH) - 1);
+			this.startDate = twoMonthAgo.getTime();
+			this.endDate = today.getTime();
+			// assuming
+			// that
+			// a month
+			// contains
+			// 30.4
+			// days
+			this.expectedDaysBetween = (int) (monthsDiff * 30);
+			this.expectedMonthsBetween = 2.1;
+			this.aDate = dateYesterday.getTime();
+			this.expectedInRangeResult = true;
+
+		}
+
 		public void when_the_object_is_instantiated() {
 			try {
 				this.dateRange = new DateRange(this.startDate, this.endDate);
@@ -301,6 +399,16 @@ public class DateRangeTest {
 			try {
 				this.dateRange = new DateRange(this.startDate, this.endDate);
 				this.result = this.dateRange.isInRange(this.aDate) == this.expectedInRangeResult;
+			} catch (final Exception e) {
+				this.result = false;
+			}
+
+		}
+
+		public void when_the_get_months_between_is_calculated() {
+			try {
+				this.dateRange = new DateRange(this.startDate, this.endDate);
+				this.result = this.dateRange.getMonthsBetween() == this.expectedMonthsBetween;
 			} catch (final Exception e) {
 				this.result = false;
 			}

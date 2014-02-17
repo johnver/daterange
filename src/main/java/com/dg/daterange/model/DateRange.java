@@ -30,6 +30,9 @@ public final class DateRange implements Serializable {
 	private static long HOUR = MINUTE * 60;
 	private static long DAY = HOUR * 24;
 
+	// There are approximately 30 days in a month.
+	private static double DAYS_IN_MONTH = 30;
+
 	/**
 	 * This constructor accepts the startDate and endDate of the range.
 	 * 
@@ -165,5 +168,18 @@ public final class DateRange implements Serializable {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Assuming a month is 30 days difference
+	 * 
+	 * @return
+	 */
+	public double getMonthsBetween() {
+		final int numOfDaysDiff = this.getDaysBetween();
+		final double monthsBetween = new Double(numOfDaysDiff) / DAYS_IN_MONTH;
+
+		// Round to the nearest tenth.
+		return Math.round(monthsBetween * 10.0) / 10.0;
 	}
 }
