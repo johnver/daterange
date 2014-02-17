@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
+ * The class represent a range between two specified dates. It assumes that both
+ * startDate and endDate are inclusive in the range.
+ * 
  * @author johnver
  * 
  */
@@ -21,6 +24,11 @@ public final class DateRange implements Serializable {
 
 	private final Date startDate;
 	private final Date endDate;
+
+	private static long SECOND = 1000;
+	private static long MINUTE = SECOND * 60;
+	private static long HOUR = MINUTE * 60;
+	private static long DAY = HOUR * 24;
 
 	/**
 	 * This constructor accepts the startDate and endDate of the range.
@@ -122,4 +130,19 @@ public final class DateRange implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Assumes that the start date and end date are inclusive of the calculation
+	 * 
+	 * @return
+	 */
+	public int getDaysBetween() {
+
+		final long daysBetweenInMillis = this.endDate.getTime()
+				- this.startDate.getTime();
+
+		final int daysBetween = (int) (daysBetweenInMillis / DAY);
+
+		return daysBetween + 1;
+
+	}
 }
